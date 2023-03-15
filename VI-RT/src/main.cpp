@@ -4,7 +4,6 @@
 #include "Renderer/renderer.hpp"
 #include "Renderer/StandardRenderer.hpp"
 #include "Image/ImagePPM.hpp"
-#include "ImagePPM.hpp"
 #include "Shader/AmbientShader.hpp"
 #include "Light/AmbientLight.hpp"
 
