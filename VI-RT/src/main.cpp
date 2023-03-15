@@ -2,12 +2,17 @@
 #include "Scene/scene.hpp"
 #include "Camera/perspective.hpp"
 #include "Renderer/renderer.hpp"
+#include "Renderer/StandardRenderer.hpp"
 #include "Image/ImagePPM.hpp"
+#include "ImagePPM.hpp"
+#include "Shader/AmbientShader.hpp"
+#include "Light/AmbientLight.hpp"
 
 int main(int argc, const char * argv[]) {
     Scene scene;
     Perspective *cam; // Camera
     ImagePPM *img;    // Image
+    Shader *shd;
     bool success;
 
     //5 faces 
@@ -35,8 +40,12 @@ int main(int argc, const char * argv[]) {
     const Vector Up={0,1,0};
     const float fovW = 3.14f/3.f, fovH = 3.14f/3.f;
     cam = new Perspective(Eye, At, Up, W, H, fovW, fovH);
+    
+    // create the shader
+    RGB background(0.05, 0.05, 0.55);
+    shd = new AmbientShader(&scene, background);
     // declare the renderer
-    Renderer myRender (&cam, &scene);
+    StandardRenderer myRender (cam, &scene, img, shd);
     // render
     myRender.Render();
     // save the image

@@ -25,6 +25,17 @@ add_library(
         src/Camera/perspective.hpp
 )
 add_library(
+        LibImage
+        src/Image/image.cpp
+        src/Image/ImagePPM.cpp
+        src/Image/ImagePPM.hpp
+)
+#add_library(
+#        LibLight
+#        src/Light/AmbientLight.hpp
+#        src/Light/light.hpp
+#)
+add_library(
         LibPrimitive
         src/Primitive/BRDF/BRDF.hpp
         src/Primitive/BRDF/Phong.cpp
@@ -36,12 +47,22 @@ add_library(
         src/Primitive/primitive.hpp
 )
 add_library(
+        LibRenderer
+        src/Renderer/renderer.hpp
+        src/Renderer/StandardRenderer.cpp
+        src/Renderer/StandardRenderer.hpp
+)
+add_library(
         LibScene
         src/Scene/scene.cpp
         src/Scene/scene.hpp
-
 )
-
+add_library(
+        LibShader
+        src/Shader/AmbientShader.cpp
+        src/Shader/AmbientShader.hpp
+        src/Shader/shader.hpp
+)
 add_library(
         LibUtils
         src/utils/AABB.cpp
