@@ -1,10 +1,3 @@
-//
-//  light.hpp
-//  VI-RT
-//
-//  Created by Luis Paulo Santos on 04/02/2023.
-//
-
 #ifndef light_hpp
 #define light_hpp
 

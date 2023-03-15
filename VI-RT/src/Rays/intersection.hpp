@@ -1,10 +1,3 @@
-//
-//  Intersection.hpp
-//  VI-RT
-//
-//  Created by Luis Paulo Santos on 30/01/2023.
-//
-
 #ifndef Intersection_hpp
 #define Intersection_hpp
 

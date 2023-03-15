@@ -1,10 +1,3 @@
-//
-//  ImagePPM.cpp
-//  VI-RT
-//
-//  Created by Luis Paulo Santos on 09/03/2023.
-//
-
 #include "ImagePPM.hpp"
 #include <iostream>
 #include <fstream>

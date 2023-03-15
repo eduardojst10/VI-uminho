@@ -1,10 +1,3 @@
-//
-//  ImagePPM.hpp
-//  VI-RT
-//
-//  Created by Luis Paulo Santos on 09/03/2023.
-//
-
 #ifndef ImagePPM_hpp
 #define ImagePPM_hpp
 #include "image.hpp"
