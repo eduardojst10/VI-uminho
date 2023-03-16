@@ -58,15 +58,13 @@ int numPrimitives, numLights, numBRDFs;
     std::vector <Light> lights;
     std::vector <BRDF> BRDFs; 
  
- 
- 
 */
 
  bool Scene::Load (const std::string &fname) {
     ObjReaderConfig reader_config;
     ObjReader myObjReader;
     bool success = false;
-
+    
 
     // this loader triangulates the faces
     if (!myObjReader.ParseFromFile(fname,reader_config)) {
@@ -108,9 +106,19 @@ int numPrimitives, numLights, numBRDFs;
 
             // Load vertices of the current face: indices to our internal vector of vertices (in Mesh)
             Face face;
+            BB& bb = face.bb;
+            bb.min = bb.max = mesh->vertices[face.vert_ndx[0]];
             for (int i = 0; i < fv; i++) {
                 index_t idx = shape.mesh.indices[index_offset + i];
                 face.vert_ndx[i] = idx.vertex_index;
+                
+                /*
+                    TODO:
+                     Perguntar ao stor a variável bool hasShadingNormals, como obter?
+                     Se temos check whether the normal_index field is valid or not for each vertex, and if it is, 
+                     we store the index of the shading normal in the face.vert_normals_ndx array and set the hasShadingNormals 
+                     flag to true
+                */
                 if(idx.normal_index >=0){
                     face.vert_normals_ndx[i] = idx.normal_index;
                     face.hasShadingNormals = true;
@@ -118,6 +126,20 @@ int numPrimitives, numLights, numBRDFs;
                 
                 // optional: per-vertex material IDs
                 // size_t material_id = shapes[s].mesh.material_ids[f];
+
+                /*
+                   bounding box to the position of the first vertex and then updates it for each subsequent vertex by 
+                   computing the minimum and maximum coordinates along each axis. After the loop, the bounding box will 
+                   contain the minimum and maximum coordinates of all vertices of the face. 
+                */ 
+                const Point& p = mesh->vertices[face.vert_ndx[i]];
+                bb.min.X = std::min(bb.min.X , p.X );
+                bb.min.Y = std::min(bb.min.Y, p.Y);
+                bb.min.Z = std::min(bb.min.Z, p.Z);
+                bb.max.X = std::max(bb.max.X, p.X);
+                bb.max.Y = std::max(bb.max.Y, p.Y);
+                bb.max.Z = std::max(bb.max.Z, p.Z);
+
             }
 
             // Calculate geometric normal
@@ -131,21 +153,6 @@ int numPrimitives, numLights, numBRDFs;
             //Próximo vertice, andamos de 3 em 3 no array
             index_offset +=fv;
 
-            /*
-                The reason we use a pointer to a Geometry object (Geometry*) instead of a Geometry object directly 
-                is that Geometry is an abstract base class, meaning it has pure virtual functions that must 
-                be implemented by any derived class.
-        
-                Dps de dar load aos vertices, normals e faces vamos criar uma nova primitive
-            
-               
-            
-            Geometry* geometry = new Mesh(mesh);
-            Primitive primitive;
-            //Vou ter problemas ocm pointers? usar "->"
-            primitive.g = geometry;
-            primitive.material_ndx = 0;
-            */
         }
 
         //mesh->numFaces = shape.mesh.num_face_vertices.size();??
@@ -167,7 +174,23 @@ int numPrimitives, numLights, numBRDFs;
         }
 
         mesh->numNormals = static_cast<int>(mesh->normals.size());
-    
+
+
+        /*
+                The reason we use a pointer to a Geometry object (Geometry*) instead of a Geometry object directly 
+                is that Geometry is an abstract base class, meaning it has pure virtual functions that must 
+                be implemented by any derived class.
+        
+                Dps de dar load aos vertices, normals e faces vamos criar uma nova primitive
+            
+               
+            
+            Geometry* geometry = new Mesh(mesh);
+            Primitive primitive;
+            //Vou ter problemas ocm pointers? usar "->"
+            primitive.g = geometry;
+            primitive.material_ndx = 0;
+            */
     }
     
     //PrintInfo(myObjReader);
