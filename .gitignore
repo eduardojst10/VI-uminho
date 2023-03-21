@@ -1,0 +1,6 @@
+# Ignore the  directory and its contents
+VI-RT.xcodeproj/
+VI-RT/build/
+.vscode/
+VI-RT/src/Scene/tinyobjloader/
+
