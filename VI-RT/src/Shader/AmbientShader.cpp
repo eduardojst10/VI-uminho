@@ -16,7 +16,7 @@ RGB AmbientShader::shade(bool intersected, Intersection isect) {
     
     // ambient shade
     // Loop over scene's light sources and process Ambient Lights
-    for (auto light_itr = scene->lights.begin() ; light_itr != scene->lights.end() ; light_itr++) {
+    for (auto light_itr = scene->getLights().begin() ; light_itr != scene->getLights().end() ; light_itr++) {
         Point p_dummy;
         
         // is it an ambient light ?

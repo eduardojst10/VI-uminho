@@ -61,23 +61,15 @@ int numPrimitives, numLights, numBRDFs;
 */
 
  bool Scene::Load (const std::string &fname) {
-    ObjReaderConfig reader_config;
     ObjReader myObjReader;
     bool success = false;
     
 
     // this loader triangulates the faces
-    if (!myObjReader.ParseFromFile(fname,reader_config)) {
-        if (!myObjReader.Error().empty()){
-            std::cerr << "TinyObjReader: " << myObjReader.Error();
-        }
+    if (!myObjReader.ParseFromFile(fname)) {
         return false;
     }
 
-
-    if(!myObjReader.Warning().empty()){
-        std::cout << "TinyObjReader Warning: " << myObjReader.Warning();
-    }
     // convert loader's representation to my representation
     const std::vector<shape_t> shapes = myObjReader.GetShapes();
     const std::vector<material_t> materials = myObjReader.GetMaterials();
@@ -85,12 +77,26 @@ int numPrimitives, numLights, numBRDFs;
     /*
     auto keyword in C++ automatically detects and assigns a data type to the variable with which it is used. 
     The compiler analyses the variable's data type by looking at its initialization.
-    Podemos usar size_t ou auto
-     
-    Shapes (individual objects or meshes)
-    */
+    Podemos usar size_t ou auto   
     
-    for(const auto& shape: shapes){
+    */
+
+    Scene *scene;
+    
+    // Load Materials
+    for(const auto& mat: materials){
+        Phong p;
+        p.Ka = RGB(mat.ambient[0],mat.ambient[1],mat.ambient[2]);
+        p.Kd = RGB(mat.diffuse[0],mat.diffuse[1],mat.diffuse[2]);
+        p.Ks = RGB(mat.specular[0],mat.specular[1],mat.specular[2]);
+        p.Kt = RGB(mat.transmittance[0],mat.transmittance[1],mat.transmittance[2]);
+        p.Ns = mat.shininess;
+        scene->BRDFs.push_back(p);
+    }
+    
+
+    //Load Primitives
+    for(const auto& shape: shapes){ //Shapes (individual objects or meshes)
         int index_offset = 0;
         Mesh *mesh; 
         
@@ -108,8 +114,10 @@ int numPrimitives, numLights, numBRDFs;
             Face face;
             BB& bb = face.bb;
             bb.min = bb.max = mesh->vertices[face.vert_ndx[0]];
+            std::cout << "DEU MERDA 1!! :o\n";
             for (int i = 0; i < fv; i++) {
                 index_t idx = shape.mesh.indices[index_offset + i];
+                
                 face.vert_ndx[i] = idx.vertex_index;
                 
                 /*
@@ -141,17 +149,21 @@ int numPrimitives, numLights, numBRDFs;
                 bb.max.Z = std::max(bb.max.Z, p.Z);
 
             }
-
+            std::cout << "DEU MERDA 2!! :o\n";
             // Calculate geometric normal
             Vector v0(mesh->vertices[face.vert_ndx[0]].X,mesh->vertices[face.vert_ndx[0]].Y, mesh->vertices[face.vert_ndx[0]].Z);
             Vector v1(mesh->vertices[face.vert_ndx[1]].X,mesh->vertices[face.vert_ndx[1]].Y, mesh->vertices[face.vert_ndx[1]].Z);
             Vector v2(mesh->vertices[face.vert_ndx[2]].X,mesh->vertices[face.vert_ndx[2]].Y, mesh->vertices[face.vert_ndx[2]].Z);
-            Vector geonormal = (v1 - v0).cross(v2-v0); //normalize?
+            Vector geonormal = (v1 - v0).cross(v2-v0);
+            geonormal.normalize();
             face.geoNormal = geonormal;
 
             mesh->faces.push_back(face);
             //Próximo vertice, andamos de 3 em 3 no array
             index_offset +=fv;
+
+            // per-face material??
+
 
         }
 
@@ -160,7 +172,7 @@ int numPrimitives, numLights, numBRDFs;
         //static_cast<new_type>(expression)
         mesh->numFaces = static_cast<int>(mesh->faces.size());
         mesh->numVertices = static_cast<int>(attrib.vertices.size() / 3);
-
+        std::cout << "DEU MERDA 3!! :o\n";
       // Load vertices
         for (size_t i = 0; i < attrib.vertices.size(); i += 3) {
             Point vertex(attrib.vertices[i], attrib.vertices[i + 1], attrib.vertices[i + 2]);
@@ -174,23 +186,22 @@ int numPrimitives, numLights, numBRDFs;
         }
 
         mesh->numNormals = static_cast<int>(mesh->normals.size());
-
-
-        /*
-                The reason we use a pointer to a Geometry object (Geometry*) instead of a Geometry object directly 
-                is that Geometry is an abstract base class, meaning it has pure virtual functions that must 
-                be implemented by any derived class.
         
-                Dps de dar load aos vertices, normals e faces vamos criar uma nova primitive
-            
-               
-            
-            Geometry* geometry = new Mesh(mesh);
-            Primitive primitive;
-            //Vou ter problemas ocm pointers? usar "->"
-            primitive.g = geometry;
-            primitive.material_ndx = 0;
-            */
+        std::cout << "DEU MERDA 4!! :o\n";
+        /*
+            The reason we use a pointer to a Geometry object (Geometry*) instead of a Geometry object directly 
+            is that Geometry is an abstract base class, meaning it has pure virtual functions that must 
+            be implemented by any derived class.
+        
+            Dps de dar load aos vertices, normals e faces vamos criar a nova Primitiva             
+          
+        */
+        Geometry* geometry = mesh;
+        Primitive primitive;
+        //Vou ter problemas ocm pointers? usar "->"
+        primitive.g = geometry;
+        primitive.material_ndx = 0; //??
+        scene->prims.push_back(primitive);
     }
     
     //PrintInfo(myObjReader);

@@ -2,6 +2,7 @@
 #define BB_hpp
 
 #include "../utils/vector.hpp"
+#include "../Rays/ray.hpp"
 
 
 /*
@@ -21,6 +22,9 @@ typedef struct BB {
         else if (p.Y > max.Y) max.Y = p.Y;
         if (p.Z < min.Z) min.Z = p.Z;
         else if (p.Z > max.Z) max.Z = p.Z;
+    }
+    bool intersect(Ray r){
+        return false;
     }
 } BB;
 

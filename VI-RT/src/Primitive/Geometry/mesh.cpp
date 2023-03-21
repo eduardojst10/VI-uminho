@@ -1,10 +1,23 @@
 #include "mesh.hpp"
 #define MAXFLOAT 0.2
 // see pbrt book (3rd ed.), sec 3.6.2, pag 157
+/*
+    Link: https://en.wikipedia.org/wiki/Möller–Trumbore_intersection_algorithm
+
+
+*/
 bool Mesh::TriangleIntersect (Ray r, Face f, Intersection *isect) {
+    bool success;
+    if(!f.bb.intersect(r)) return false;
 
+    const float EPSILON = 0.0000001;
+    Point v0 = this->vertices.at(f.vert_ndx[0]);
+    Point v1 = this->vertices.at(f.vert_ndx[1]);
+    Point v2 = this->vertices.at(f.vert_ndx[2]);
 
-    return false;
+    Vector edge1, edge2, h, s, q;
+
+    return true;
 }
 
 bool Mesh::intersect (Ray r, Intersection *isect) {

@@ -16,10 +16,10 @@ int main(int argc, const char * argv[]) {
 
     //5 faces 
     std::cout << "Estamos aqui :o\n";  
-    std::string my_path = "Scene/tinyobjloader/models/cornell_box.obj";
+    std::string my_path = "./Scene/tinyonjloader/models/cornell_box.obj";
 
-    success = scene.Load(my_path);
-    
+    success = scene.Load(my_path); 
+
     if (!success) {
         std::cout << "ERROR!! :o\n";
         return 1;
@@ -28,7 +28,7 @@ int main(int argc, const char * argv[]) {
     scene.printSummary();
     std::cout << std::endl;
     
-        // Image resolution
+    // Image resolution
     const int W= 640;
     const int H= 480;
     

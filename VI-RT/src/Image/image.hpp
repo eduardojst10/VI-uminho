@@ -17,17 +17,18 @@ public:
     ~Image() {
         if (imagePlane!=NULL) delete[] imagePlane;
     }
+    
     bool set (int x, int y, const RGB &rgb) {
-        if (x>W or y>H) return false;
+        if (x>W || y>H) return false;
         imagePlane[y*W+x] = rgb;
         return true;
     }
     bool add (int x, int y, const RGB &rgb) {
-        if (x>W or y>H) return false;
+        if (x>W || y>H) return false;
         imagePlane[y*W+x] += rgb;
         return true;
     }
-    bool Save (std::string filename) {return true;}
+    virtual bool Save (std::string filename) {return true;}
 };
 
 #endif /* image_hpp */

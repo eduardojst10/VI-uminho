@@ -14,7 +14,7 @@ protected:
     Shader *shd;
 public:
     Renderer (Camera *cam, Scene * scene, Image * img, Shader *shd): cam(cam), scene(scene), img(img), shd(shd) {}
-    virtual void Render () {}
+    virtual void Render() {}
 };
 
 #endif /* renderer_hpp */

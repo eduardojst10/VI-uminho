@@ -6,7 +6,7 @@
 class StandardRenderer: public Renderer {
 public:
     StandardRenderer (Camera *cam, Scene * scene, Image * img, Shader *shd): Renderer(cam, scene, img, shd) {}
-    void Render ();
+    void StandardRenderer::Render ();
 };
 
 #endif /* StandardRenderer_hpp */

@@ -18,6 +18,7 @@ class Scene {
 public:
     Scene (): numPrimitives(0), numLights(0), numBRDFs(0) {}
     bool Load (const std::string &fname);
+    std::vector<Light> getLights(void){return this->lights;};
     bool SetLights (void) { return true; };
     bool trace (Ray r, Intersection *isect);
     void printSummary(void) {
@@ -25,6 +26,7 @@ public:
         std::cout << "#lights = " << numLights << " ; ";
         std::cout << "#materials = " << numBRDFs << " ;" << std::endl;
     }
+
 };
 
 #endif /* Scene_hpp */
