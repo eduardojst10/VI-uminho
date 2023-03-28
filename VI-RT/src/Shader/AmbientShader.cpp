@@ -7,11 +7,11 @@ RGB AmbientShader::shade(bool intersected, Intersection isect) {
     RGB color(0.,0.,0.);
     
     // if no intersection, return background
-    /*
+    
     if (!intersected) {
         return (background);
     }
-    */
+    
     // verify whether the intersected object has an ambient component
     Phong *f = (Phong *)isect.f;
     

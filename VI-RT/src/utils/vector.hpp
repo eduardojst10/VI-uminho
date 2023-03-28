@@ -34,7 +34,7 @@ public:
     
     
     // note that methods declared within the class are inline by default
-    inline float norm () {
+    inline float norm () const{
         return std::sqrtf(X*X+Y*Y+Z*Z);
     }
     inline void normalize () {
@@ -45,6 +45,16 @@ public:
             Z /= my_norm;
         }
     }
+    
+     // New function that returns a normalized vector without modifying the current one
+    inline Vector normalized() const {
+        const float my_norm = norm();
+        if (my_norm > 0.) {
+            return {X / my_norm, Y / my_norm, Z / my_norm};
+        }
+        return *this;
+    }
+
     float dot (const Vector v2) const {
         return X*v2.X + Y*v2.Y + Z*v2.Z;
     }

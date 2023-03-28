@@ -50,9 +50,10 @@ int main(int argc, const char * argv[]) {
     //std::cout << "Before Rendering!" << std::endl;
 
     myRender.Render();
+    std::cout << "Render" << std::endl;
    
 
-    img->Save("C:/Users/USER/Documents/GitHub/VI-uminho/VI-RT/MyImage.ppm");
+    img->Save("C:/Users/USER/Documents/GitHub/VI-uminho/VI-RT/fgs.ppm");
     
     std::cout << "That's all, folks!" << std::endl;
     return 0;

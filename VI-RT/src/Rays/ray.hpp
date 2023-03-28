@@ -5,6 +5,7 @@
 
 class Ray {
 public:
+    int x,y;
     Point o; // ray origin
     Vector dir; // ray direction, Ray vector
     Ray () {}

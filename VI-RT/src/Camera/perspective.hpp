@@ -19,6 +19,7 @@ public:
         vdirection.normalize(); 
 
         //camera right vector
+        Up.normalized();
         Vector r = Up.cross(vdirection);
         r.normalize();
         c2w[0][0] = r.X;
@@ -32,7 +33,7 @@ public:
         c2w[2][2] = vdirection.Z;
         
     }
-    bool GenerateRay(const int x, const int y, Ray *r, const float *cam_jitter=NULL);
+    void GenerateRay(const int x, const int y, Ray *r, const float *cam_jitter=NULL);
     void getResolution (int *_W, int *_H) {*_W=W; *_H=H;}
 };
 

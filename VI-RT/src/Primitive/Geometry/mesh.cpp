@@ -39,13 +39,19 @@ bool Mesh::TriangleIntersect (Ray r, Face face, Intersection *isect) {
     
     if (t > EPSILON) {
         Point inter = r.o + (r.dir * t);
+
+        // Update the Intersection structure with the relevant information
+        isect->depth = t;
+        isect->p = inter;
+        isect->gn = face.geoNormal;
+        isect->sn = face.geoNormal;
+        isect->wo= r.dir * static_cast<float>(-1);
         return true;
     }
     else {
         return false;
     }
     
-    return true;
 }
 
 bool Mesh::intersect (Ray r, Intersection *isect) {
