@@ -6,17 +6,45 @@
 
 
 */
-bool Mesh::TriangleIntersect (Ray r, Face f, Intersection *isect) {
+bool Mesh::TriangleIntersect (Ray r, Face face, Intersection *isect) {
     bool success;
-    if(!f.bb.intersect(r)) return false;
+    //if(!face.bb.intersect(r)) return false;
 
     const float EPSILON = 0.0000001;
-    Point v0 = this->vertices.at(f.vert_ndx[0]);
-    Point v1 = this->vertices.at(f.vert_ndx[1]);
-    Point v2 = this->vertices.at(f.vert_ndx[2]);
+    Point v0 = this->vertices.at(face.vert_ndx[0]);
+    Point v1 = this->vertices.at(face.vert_ndx[1]);
+    Point v2 = this->vertices.at(face.vert_ndx[2]);
 
     Vector edge1, edge2, h, s, q;
+    float a,f,u,v;
 
+    edge1 = v0.point2vec(v1);// edge1 = v1 - v0;
+    edge2 = v0.point2vec(v2);// edge2 = v2 - v0;
+    h = r.dir.cross(edge2);
+    a = edge1.dot(h);
+    if (a > -EPSILON && a < EPSILON) {
+        return false;
+    }
+    f = 1.0/a;
+    s = v0.point2vec(r.o); // s = r.0 - v0;
+    u = f * s.dot(h);
+    if (u < 0.0 || u > 1.0)
+        return false;
+    q = s.cross(edge1);
+    v = f * r.dir.dot(q);
+    if (v < 0.0  || u + v > 1.0) {
+        return false;
+    }
+    float t = f * edge2.dot(q);
+    
+    if (t > EPSILON) {
+        Point inter = r.o + (r.dir * t);
+        return true;
+    }
+    else {
+        return false;
+    }
+    
     return true;
 }
 

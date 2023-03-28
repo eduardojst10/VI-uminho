@@ -23,9 +23,11 @@ typedef struct BB {
         if (p.Z < min.Z) min.Z = p.Z;
         else if (p.Z > max.Z) max.Z = p.Z;
     }
+    
     bool intersect(Ray r){
         return false;
     }
+    
 } BB;
 
 #endif /* AABB_hpp */

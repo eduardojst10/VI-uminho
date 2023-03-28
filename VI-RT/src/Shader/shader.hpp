@@ -4,6 +4,11 @@
 #include "../Scene/scene.hpp"
 #include "../utils/RGB.hpp"
 
+/*
+    Provide a realistic and visually appealing representation of the 3D scene that accurately 
+    captures the interaction of light and surfaces within the scene
+*/
+
 class Shader {
 protected:
     Scene *scene;

@@ -1,14 +1,15 @@
-#include "scene.hpp"
-
 #define TINYOBJLOADER_IMPLEMENTATION
 #include "tinyobjloader/tiny_obj_loader.h"
 #include "../Primitive/primitive.hpp"
 #include "../Primitive/Geometry/mesh.hpp"
 #include "../Primitive/BRDF/Phong.hpp"
+#include "scene.hpp"
+
 
 #include <iostream>
 #include <set>
 #include <vector>
+//#include "spdlog/spdlog.h"
 
 using namespace tinyobj;
 
@@ -60,66 +61,77 @@ int numPrimitives, numLights, numBRDFs;
  
 */
 
- bool Scene::Load (const std::string &fname) {
-    ObjReader myObjReader;
+bool Scene::Load (const std::string &fname) {
+    tinyobj::ObjReader myObjReader;
     bool success = false;
     
-
     // this loader triangulates the faces
     if (!myObjReader.ParseFromFile(fname)) {
+        if (!myObjReader.Error().empty()) {
+            std::cerr << "TinyObjReader: " << myObjReader.Error();
+        }
         return false;
     }
-
     // convert loader's representation to my representation
     const std::vector<shape_t> shapes = myObjReader.GetShapes();
     const std::vector<material_t> materials = myObjReader.GetMaterials();
     attrib_t attrib = myObjReader.GetAttrib();
     /*
-    auto keyword in C++ automatically detects and assigns a data type to the variable with which it is used. 
-    The compiler analyses the variable's data type by looking at its initialization.
-    Podemos usar size_t ou auto   
+        auto keyword in C++ automatically detects and assigns a data type to the variable with which it is used. 
+        The compiler analyses the variable's data type by looking at its initialization.
+        Podemos usar size_t ou auto   
     
+       
     */
-
-    Scene *scene;
-    
     // Load Materials
-    for(const auto& mat: materials){
-        Phong p;
-        p.Ka = RGB(mat.ambient[0],mat.ambient[1],mat.ambient[2]);
-        p.Kd = RGB(mat.diffuse[0],mat.diffuse[1],mat.diffuse[2]);
-        p.Ks = RGB(mat.specular[0],mat.specular[1],mat.specular[2]);
-        p.Kt = RGB(mat.transmittance[0],mat.transmittance[1],mat.transmittance[2]);
-        p.Ns = mat.shininess;
-        scene->BRDFs.push_back(p);
-    }
     
+    for(const auto& mat: materials){
+        Phong *p = new Phong();
+        p->Ka = RGB(mat.ambient[0],mat.ambient[1],mat.ambient[2]);
+        p->Kd = RGB(mat.diffuse[0],mat.diffuse[1],mat.diffuse[2]);
+        p->Ks = RGB(mat.specular[0],mat.specular[1],mat.specular[2]);
+        p->Kt = RGB(mat.transmittance[0],mat.transmittance[1],mat.transmittance[2]);
+        p->Ns = mat.shininess;
+        this->BRDFs.push_back(p);
+        this->numBRDFs+=1;
+    }
+
+    Mesh *mesh = new Mesh(); 
+    for (size_t i = 0; i < attrib.vertices.size(); i += 3) {
+        real_t vx = attrib.vertices[i];
+        real_t vy = attrib.vertices[i + 1];
+        real_t vz = attrib.vertices[i + 2];
+        mesh->vertices.push_back(Point(vx, vy, vz));
+    }
 
     //Load Primitives
     for(const auto& shape: shapes){ //Shapes (individual objects or meshes)
         int index_offset = 0;
-        Mesh *mesh; 
-        
-        
         std::vector<Face> newFaces;
-        for(size_t f = 0; f < shape.mesh.num_face_vertices.size(); ++f){
-            int fv = shape.mesh.num_face_vertices[f];
+
+        for(size_t f = 0; f < shape.mesh.num_face_vertices.size(); f++){
+            size_t fv = size_t(shape.mesh.num_face_vertices[f]);
             // Only supports triangles
             if (fv != 3) {
-                std::cerr << "Error: Only triangles are supported." << std::endl;
+                std::cerr << "-- Error: Only triangles are supported --" << std::endl;
                 return false;
             }
 
             // Load vertices of the current face: indices to our internal vector of vertices (in Mesh)
-            Face face;
-            BB& bb = face.bb;
-            bb.min = bb.max = mesh->vertices[face.vert_ndx[0]];
-            std::cout << "DEU MERDA 1!! :o\n";
-            for (int i = 0; i < fv; i++) {
+            Face face; //
+            //BB& bb = face.bb;
+            //bb.min = bb.max = mesh->vertices[face.vert_ndx[0]]; //erro está aqui
+            
+
+            for (size_t i = 0; i < fv; i++) {
                 index_t idx = shape.mesh.indices[index_offset + i];
-                
-                face.vert_ndx[i] = idx.vertex_index;
-                
+                face.vert_ndx[i] = idx.vertex_index;  //loading of vertex values
+                face.vert_normals_ndx[i] = idx.normal_index;
+                //std::cout << "In vertex: " << idx.vertex_index << "\n"; 
+                //real_t vx = attrib.vertices[3*size_t(idx.vertex_index)+0];
+                //real_t vy = attrib.vertices[3*size_t(idx.vertex_index)+1];
+                //real_t vz = attrib.vertices[3*size_t(idx.vertex_index)+2];
+                //mesh->vertices.push_back(Point(vx,vy,vz));
                 /*
                     TODO:
                      Perguntar ao stor a variável bool hasShadingNormals, como obter?
@@ -131,63 +143,61 @@ int numPrimitives, numLights, numBRDFs;
                     face.vert_normals_ndx[i] = idx.normal_index;
                     face.hasShadingNormals = true;
                 }else face.hasShadingNormals = false;
-                
-                // optional: per-vertex material IDs
-                // size_t material_id = shapes[s].mesh.material_ids[f];
 
                 /*
-                   bounding box to the position of the first vertex and then updates it for each subsequent vertex by 
+                   Bounding box (BB) to the position of the first vertex and then updates it for each subsequent vertex by 
                    computing the minimum and maximum coordinates along each axis. After the loop, the bounding box will 
                    contain the minimum and maximum coordinates of all vertices of the face. 
                 */ 
-                const Point& p = mesh->vertices[face.vert_ndx[i]];
-                bb.min.X = std::min(bb.min.X , p.X );
-                bb.min.Y = std::min(bb.min.Y, p.Y);
-                bb.min.Z = std::min(bb.min.Z, p.Z);
-                bb.max.X = std::max(bb.max.X, p.X);
-                bb.max.Y = std::max(bb.max.Y, p.Y);
-                bb.max.Z = std::max(bb.max.Z, p.Z);
+                //const Point& p = mesh->vertices[face.vert_ndx[i]];
 
+                /*
+                    bb.min.X = std::min(bb.min.X , p.X );
+                    bb.min.Y = std::min(bb.min.Y, p.Y);
+                    bb.min.Z = std::min(bb.min.Z, p.Z);
+                    bb.max.X = std::max(bb.max.X, p.X);
+                    bb.max.Y = std::max(bb.max.Y, p.Y);
+                    bb.max.Z = std::max(bb.max.Z, p.Z);
+                */
             }
-            std::cout << "DEU MERDA 2!! :o\n";
+            
+
+            //std::cout << "--Info: Calculating geometric normals " << std::endl;
+
             // Calculate geometric normal
-            Vector v0(mesh->vertices[face.vert_ndx[0]].X,mesh->vertices[face.vert_ndx[0]].Y, mesh->vertices[face.vert_ndx[0]].Z);
-            Vector v1(mesh->vertices[face.vert_ndx[1]].X,mesh->vertices[face.vert_ndx[1]].Y, mesh->vertices[face.vert_ndx[1]].Z);
-            Vector v2(mesh->vertices[face.vert_ndx[2]].X,mesh->vertices[face.vert_ndx[2]].Y, mesh->vertices[face.vert_ndx[2]].Z);
+            Vector v0(attrib.vertices[3*size_t(shape.mesh.indices[index_offset + 0].vertex_index) + 0],
+                   attrib.vertices[3*size_t(shape.mesh.indices[index_offset + 0].vertex_index) + 1],
+                   attrib.vertices[3*size_t(shape.mesh.indices[index_offset + 0].vertex_index) + 2]);
+            Vector v1(attrib.vertices[3*size_t(shape.mesh.indices[index_offset + 1].vertex_index) + 0],
+                   attrib.vertices[3*size_t(shape.mesh.indices[index_offset + 1].vertex_index) + 1],
+                   attrib.vertices[3*size_t(shape.mesh.indices[index_offset + 1].vertex_index) + 2]);
+            Vector v2(attrib.vertices[3*size_t(shape.mesh.indices[index_offset + 2].vertex_index) + 0],
+                   attrib.vertices[3*size_t(shape.mesh.indices[index_offset + 2].vertex_index) + 1],
+                   attrib.vertices[3*size_t(shape.mesh.indices[index_offset + 2].vertex_index) + 2]);
             Vector geonormal = (v1 - v0).cross(v2-v0);
             geonormal.normalize();
             face.geoNormal = geonormal;
-
             mesh->faces.push_back(face);
-            //Próximo vertice, andamos de 3 em 3 no array
+            
+            //Próximo vertice, every 3 in array
             index_offset +=fv;
 
-            // per-face material??
-
-
         }
-
-        //mesh->numFaces = shape.mesh.num_face_vertices.size();??
-        //conversions between related types in a safe and predictable way
-        //static_cast<new_type>(expression)
+        /*
+            Conversions between related types in a safe and predictable way
+            static_cast<new_type>(expression)
+        */
+        
         mesh->numFaces = static_cast<int>(mesh->faces.size());
         mesh->numVertices = static_cast<int>(attrib.vertices.size() / 3);
-        std::cout << "DEU MERDA 3!! :o\n";
-      // Load vertices
-        for (size_t i = 0; i < attrib.vertices.size(); i += 3) {
-            Point vertex(attrib.vertices[i], attrib.vertices[i + 1], attrib.vertices[i + 2]);
-            mesh->vertices.push_back(vertex);
-        }
-
-        // Load normals
+        
+        // Load unique normals
         for (size_t i = 0; i < attrib.normals.size(); i += 3) {
             Vector normal(attrib.normals[i], attrib.normals[i + 1], attrib.normals[i + 2]);
             mesh->normals.push_back(normal);
         }
 
         mesh->numNormals = static_cast<int>(mesh->normals.size());
-        
-        std::cout << "DEU MERDA 4!! :o\n";
         /*
             The reason we use a pointer to a Geometry object (Geometry*) instead of a Geometry object directly 
             is that Geometry is an abstract base class, meaning it has pure virtual functions that must 
@@ -197,15 +207,18 @@ int numPrimitives, numLights, numBRDFs;
           
         */
         Geometry* geometry = mesh;
-        Primitive primitive;
-        //Vou ter problemas ocm pointers? usar "->"
-        primitive.g = geometry;
-        primitive.material_ndx = 0; //??
-        scene->prims.push_back(primitive);
-    }
+        Primitive* primitive = new Primitive();
+        primitive->g = geometry;
+        primitive->material_ndx = shape.mesh.material_ids[0]; //??
     
-    //PrintInfo(myObjReader);
-        
+
+        this->prims.push_back(primitive);
+        this->numPrimitives++;
+    }
+    //std::cout << "--Info: Done loading Primitives " << std::endl;
+    
+    
+    PrintInfo(myObjReader);
     return true;
 }
 
@@ -219,11 +232,11 @@ bool Scene::trace (Ray r, Intersection *isect) {
     
     // iterate over all primitives
     for (auto prim_itr = prims.begin() ; prim_itr != prims.end() ; prim_itr++) {
-        if (prim_itr->g->intersect(r, &curr_isect)) {
+        if ((*prim_itr)->g->intersect(r, &curr_isect)) {
             if (!intersection) { // first intersection
                 intersection = true;
                 *isect = curr_isect;
-                isect->f = &BRDFs[prim_itr->material_ndx];
+                isect->f = BRDFs[(*prim_itr)->material_ndx];
             }
             else if (curr_isect.depth < isect->depth) {
                 *isect = curr_isect;

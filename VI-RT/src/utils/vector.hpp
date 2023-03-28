@@ -24,6 +24,15 @@ public:
     friend Vector operator*(const double f, const Vector& p) {
         return p*f;
     }
+    /* Para já não usado
+        Point operator*(const Point& p) const{
+            return Point(X*p.X,Y*p.Y,Z*p.Z);
+        }
+    */
+    // Addition between point and vector
+    
+    
+    
     // note that methods declared within the class are inline by default
     inline float norm () {
         return std::sqrtf(X*X+Y*Y+Z*Z);
@@ -40,7 +49,7 @@ public:
         return X*v2.X + Y*v2.Y + Z*v2.Z;
     }
     // from pbrt book (3rd ed.), sec 2.2.1, pag 65
-    Vector cross (Vector v2) {
+    Vector cross (Vector v2) const{
         double v1x = X, v1y = Y, v1z = Z;
         double v2x = v2.X, v2y = v2.Y, v2z = v2.Z;
         return Vector((v1y * v2z) - (v1z * v2y),
@@ -66,6 +75,8 @@ public:
         Vector vv = *this;
         return (vv.dot(v) < 0.f) ? -1.f * vv : vv;
     }
+
+    
 };
 
 class Point {
@@ -75,6 +86,7 @@ public:
     Point ():X(0.),Y(0.),Z(0.){}
     Point (float x, float y, float z):X(x),Y(y),Z(z){}
     ~Point(){}
+    Point operator +(const Vector &v) const {return {X + v.X, Y + v.Y, Z + v.Z};}
     Point operator -(const Point &p) const { return {X-p.X, Y-p.Y, Z-p.Z};}
     Point operator +(const Point &p) const { return {X+p.X, Y+p.Y, Z+p.Z};}
     Point operator *(const float f) const { return {f*X, f*Y, f*Z};}
@@ -89,7 +101,7 @@ public:
         X=x;Y=y;Z=z;
     }
     // note that methods declared within the class are inline by default
-    inline Vector vec2point (Point p2) {
+    inline Vector point2vec (Point p2) const {
         Vector v(p2.X-X, p2.Y-Y, p2.Z-Z);
         return v;
     }

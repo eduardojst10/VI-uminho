@@ -430,7 +430,7 @@ int main(int argc, char** argv) {
     // assert(true == TestLoadObj("cube.obj"));
     assert(true == TestStreamLoadObj());
     assert(true ==
-           TestLoadObj("/Users/psantos/VI-RT/VI-RT/VI-RT/Scene/tinyobjloader/models/cornell_box.obj", "/Users/psantos/VI-RT/VI-RT/VI-RT/Scene/tinyobjloader/models", false));
+           TestLoadObj("models/catmark_torus_creases0.obj", "models/", false));
   }
 
   return 0;
