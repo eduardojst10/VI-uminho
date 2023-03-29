@@ -7,7 +7,6 @@ RGB AmbientShader::shade(bool intersected, Intersection isect) {
     RGB color(0.,0.,0.);
     
     // if no intersection, return background
-    
     if (!intersected) {
         return (background);
     }
@@ -23,10 +22,6 @@ RGB AmbientShader::shade(bool intersected, Intersection isect) {
     for (auto light_itr = this->scene->lights.begin(); light_itr != this->scene->lights.end() ; light_itr++) {
         Point p_dummy;
 
-        //std::cout << "Ambient Light: " << (*light_itr)->L(p_dummy) << std::endl;
-        std::cout << "Material Ka (R-G-B): (" << Ka.R << "," << Ka.G << "," << Ka.B << ")" << std::endl;
-
-        
         // is it an ambient light ?
         if (!(*light_itr)->isAmbient) continue;
         

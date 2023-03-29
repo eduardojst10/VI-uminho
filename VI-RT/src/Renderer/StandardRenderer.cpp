@@ -12,17 +12,20 @@ void StandardRenderer::Render () {
     for (y=0 ; y< H ; y++) {  // loop over rows
         for (x=0 ; x< W ; x++) { // loop over columns
             Ray primary;
-            Intersection isect;
+            Intersection *isect = new Intersection();
             bool intersected = false;
             RGB color;
             // Generate Ray (camera)
             this->cam->GenerateRay(x,y,&primary,&cam_jitter);
+            //std:: cout << primary.dir.X << "," << primary.dir.Y << ","<< primary.dir.Z << "," << "\n";
+            
             // trace ray (scene)
-            intersected = this->scene->trace(primary,&isect);
+            intersected = this->scene->trace(primary,isect);
+            
+  
             // shade this intersection (shader)
-            color = this->shd->shade(intersected,isect); 
+            color = this->shd->shade(intersected,*isect); 
 
-        
             // write the result into the image frame buffer (image)
             img->set(x,y,color);
             

@@ -19,7 +19,8 @@ public:
         vdirection.normalize(); 
 
         //camera right vector
-        Up.normalized();
+        Vector Up_normalized = Up;
+        Up_normalized.normalize();
         Vector r = Up.cross(vdirection);
         r.normalize();
         c2w[0][0] = r.X;

@@ -1,4 +1,7 @@
 #include "mesh.hpp"
+#include <iostream>
+#include<limits>
+
 #define MAXFLOAT 0.2
 // see pbrt book (3rd ed.), sec 3.6.2, pag 157
 /*
@@ -6,15 +9,21 @@
 
 
 */
-bool Mesh::TriangleIntersect (Ray r, Face face, Intersection *isect) {
-    bool success;
-    //if(!face.bb.intersect(r)) return false;
 
+bool Mesh::TriangleIntersect (Ray r, Face face, Intersection *isect) {
     const float EPSILON = 0.0000001;
     Point v0 = this->vertices.at(face.vert_ndx[0]);
     Point v1 = this->vertices.at(face.vert_ndx[1]);
     Point v2 = this->vertices.at(face.vert_ndx[2]);
 
+    /*
+    
+    std::cout << "Triangle: (" << v0.X << ", " << v0.Y << ", " << v0.Z << "), "
+          << "(" << v1.X << ", " << v1.Y << ", " << v1.Z << "), "
+          << "(" << v2.X << ", " << v2.Y << ", " << v2.Z << ")" << std::endl;
+    std::cout << "Ray direction: (" << r.dir.X << ", " << r.dir.Y << ", " << r.dir.Z << ")" << std::endl;
+    std:: cout << "Face indices: (" << face.vert_ndx[0] << ", " << face.vert_ndx[1] << ", " << face.vert_ndx[2] << ")" << std::endl;
+*/
     Vector edge1, edge2, h, s, q;
     float a,f,u,v;
 
@@ -46,6 +55,8 @@ bool Mesh::TriangleIntersect (Ray r, Face face, Intersection *isect) {
         isect->gn = face.geoNormal;
         isect->sn = face.geoNormal;
         isect->wo= r.dir * static_cast<float>(-1);
+        //std::cout << "isect from inter point: (" << isect->p.X << "," << isect->p.Y << "," << isect->p.Z << ")" << "\n";
+
         return true;
     }
     else {
@@ -55,17 +66,15 @@ bool Mesh::TriangleIntersect (Ray r, Face face, Intersection *isect) {
 }
 
 bool Mesh::intersect (Ray r, Intersection *isect) {
-    bool intersect = true, intersect_this_face;
+    bool intersect, intersect_this_face;
     Intersection min_isect, curr_isect;
-    float min_depth= MAXFLOAT;
-    // intersect the ray with the mesh BB
-    
-    if (!intersect) return false;
-    
+    float min_depth=  MAXFLOAT; // std::numeric_limits<float>::max();//
+
     // If it intersects then loop through the faces
     intersect = false;
     for (auto face_it=faces.begin() ; face_it != faces.end() ; face_it++) {
         intersect_this_face = TriangleIntersect(r, *face_it, &curr_isect);
+        
         if (!intersect_this_face) continue;
         
         intersect = true;
@@ -74,6 +83,7 @@ bool Mesh::intersect (Ray r, Intersection *isect) {
             min_isect = curr_isect;
         }
     }
+    
     
     return intersect;
 }

@@ -34,7 +34,7 @@ bool ImagePPM::Save (std::string filename) {
     ToneMap();
 
     // write imageToSave to file    
-    std::cout << filename << std::endl;
+    //std::cout << filename << std::endl;
     std::ofstream ofs;
     try{
         ofs.open(filename, std::ios::binary); //need to spec. binary mode for windows
