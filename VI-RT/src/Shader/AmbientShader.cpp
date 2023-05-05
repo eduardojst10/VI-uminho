@@ -1,7 +1,4 @@
 #include "AmbientShader.hpp"
-#include "../Primitive/BRDF/Phong.hpp"
-
-
 
 RGB AmbientShader::shade(bool intersected, Intersection isect) {
     RGB color(0.,0.,0.);
@@ -23,7 +20,7 @@ RGB AmbientShader::shade(bool intersected, Intersection isect) {
         Point p_dummy;
 
         // is it an ambient light ?
-        if (!(*light_itr)->isAmbient) continue;
+        if (!(*light_itr)->type == AMBIENT_LIGHT) continue;
         
         color += Ka * (*light_itr)->L(p_dummy);
     }

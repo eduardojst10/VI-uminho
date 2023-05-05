@@ -4,6 +4,8 @@ cmake_minimum_required(VERSION 3.10)
 project(VI-RT)
 
 set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_FLAGS_RELEASE "-O3")
+set(CMAKE_CXX_FLAGS_DEBUG "-g")
 
 if  (WIN32)
 
@@ -30,11 +32,13 @@ add_library(
         Image/ImagePPM.cpp
         Image/ImagePPM.hpp
 )
-#add_library(
-#        LibLight
-#        src/Light/AmbientLight.hpp
-#        src/Light/light.hpp
-#)
+add_library(
+        LibLight
+        Light/AmbientLight.hpp
+        Light/light.hpp
+        Light/PointLight.hpp
+        
+)
 add_library(
         LibPrimitive
         Primitive/BRDF/BRDF.hpp
@@ -60,9 +64,11 @@ add_library(
 add_library(
         LibShader
         Shader/AmbientShader.cpp
+        Shader/WhittedShader.cpp
         Shader/AmbientShader.hpp
+        Shader/WhittedShader.hpp
         Shader/shader.hpp
-)
+        )
 add_library(
         LibUtils
         utils/AABB.cpp
@@ -71,8 +77,9 @@ add_library(
 )
 
 # Link libraries
-target_link_libraries(main LibCamera)
+target_link_libraries(main LibCamera) 
 target_link_libraries(main LibPrimitive)
+#target_link_libraries(main LibLight)
 target_link_libraries(main LibScene)
 target_link_libraries(main LibShader)
 target_link_libraries(main LibRenderer)

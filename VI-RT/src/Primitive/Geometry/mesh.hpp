@@ -4,10 +4,12 @@
 #include "geometry.hpp"
 #include "../../utils/vector.hpp"
 #include <vector>
+#include <string>
 
 // partially inspired in pbrt book (3rd ed.), sec 3.6, pag 152
 
 typedef struct Face {
+    
     int vert_ndx[3];            // indices to our internal vector of vertices (in Mesh)
     Vector geoNormal;           // geometric normal
     bool hasShadingNormals;     // are there per vertex shading normals ??
@@ -20,6 +22,7 @@ class Mesh: public Geometry {
 private:
     bool TriangleIntersect (Ray r, Face f, Intersection *isect);
 public:
+    std::string primitive;
     int numFaces;
     std::vector<Face> faces;
     int numVertices;

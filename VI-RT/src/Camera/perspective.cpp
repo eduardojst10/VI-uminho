@@ -1,8 +1,9 @@
 #include "perspective.hpp"
 
 void Perspective::GenerateRay(const int x, const int y, Ray *r, const float *cam_jitter) {
-    float normalized_x = (static_cast<float>(x) / static_cast<float>(W - 1)) * 2.0f - 1.0f;
-    float normalized_y = (static_cast<float>(y) / static_cast<float>(H - 1)) * 2.0f - 1.0f;
+    float aspect_ratio = static_cast<float>(W) / static_cast<float>(H);
+    float normalized_x = ((static_cast<float>(x) / static_cast<float>(W - 1)) * 2.0f - 1.0f) * aspect_ratio;;
+    float normalized_y = 1.0f - (static_cast<float>(y) / static_cast<float>(H - 1)) * 2.0f;
 
     Vector p = Vector(normalized_x,normalized_y,1.0f);
     float rDirX, rDirY, rDirZ;

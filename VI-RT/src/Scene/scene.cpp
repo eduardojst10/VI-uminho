@@ -96,9 +96,11 @@ bool Scene::Load (const std::string &fname) {
     for(const auto& shape: shapes){ //Shapes (individual objects or meshes)
         Mesh *mesh = new Mesh();      
         Primitive* primitive = new Primitive();
-
+        primitive->name = shape.name;
+        //std::cout << "PRIMITIVE name: " << primitive->name << "\n";
         // Load unique vertices
         for (size_t i = 0; i < attrib.vertices.size(); i += 3) {
+            
             tinyobj::real_t vx = attrib.vertices[i];
             tinyobj::real_t vy = attrib.vertices[i + 1];
             tinyobj::real_t vz = attrib.vertices[i + 2];
@@ -121,7 +123,6 @@ bool Scene::Load (const std::string &fname) {
                 face.vert_ndx[i] = idx.vertex_index;  //loading of vertex values
                 face.vert_normals_ndx[i] = idx.normal_index;   
 
-                //std::cout << "Face: " << f << ", fv: " << fv << ",idx: " << idx.vertex_index <<  ",Triangle: (" << vx << ", " << vy << ", " << vz << ")\n" ;
                 /*
                     TODO:
                      variável bool hasShadingNormals, como obter?
@@ -162,10 +163,16 @@ bool Scene::Load (const std::string &fname) {
             geonormal.normalize();
             face.geoNormal = geonormal;
             mesh->faces.push_back(face);
+            mesh->primitive = primitive->name;
             //Próximo vertice, every 3 in array
             index_offset +=fv;
             primitive->material_ndx = shape.mesh.material_ids[f];
-
+            /*
+            if(primitive->name == "short_block" || primitive->name == "tall_block"){
+                //std::cout << "Material index for face " << f << ": " << shape.mesh.material_ids[f] << std::endl;
+                
+            }
+            */
             //Conversions between related types in a safe and predictable way static_cast<new_type>(expression)
             mesh->numFaces = static_cast<int>(shape.mesh.num_face_vertices.size());
             mesh->numVertices = static_cast<int>(attrib.vertices.size() / 3);
@@ -181,7 +188,6 @@ bool Scene::Load (const std::string &fname) {
             The reason we use a pointer to a Geometry object (Geometry*) instead of a Geometry object directly 
             is that Geometry is an abstract base class, meaning it has pure virtual functions that must 
             be implemented by any derived class.
-        
             Dps de dar load aos vertices, normals e faces vamos criar a nova Primitiva             
           
         */
@@ -203,14 +209,17 @@ bool Scene::trace (Ray r, Intersection *isect) {
     bool intersection = false;    
 
     if (numPrimitives==0) return false;
-    
+    //std:: cout << prims.size() << std::endl;
     // iterate over all primitives
+    int i=1;
     for (auto prim_itr = prims.begin() ; prim_itr != prims.end() ; prim_itr++) {
-
         
         if ((*prim_itr)->g->intersect(r, &curr_isect)) {
             
             if (!intersection) { // first intersection
+                if(i == 6){
+                    //std:: cout << (*prim_itr)->material_ndx << std::endl;
+                }
                 intersection = true;
                 *isect = curr_isect;
                 isect->f = this->BRDFs[(*prim_itr)->material_ndx];
@@ -222,9 +231,28 @@ bool Scene::trace (Ray r, Intersection *isect) {
             }
             
         }
+        i++;
 
     }
     
     return intersection;
 }
 
+// checks whether a point on a light source (distance maxL) is visible
+// Similar to Scene::trace() but finishes immediately once the 1st intersection is found
+bool Scene::visibility (Ray s, const float maxL) {
+    bool visible = true;
+    Intersection curr_isect;
+    
+    if (this->numPrimitives==0) return true;
+    
+    // iterate over all primitives while visible
+    for (auto prim_itr = prims.begin() ; prim_itr != prims.end() && visible ; prim_itr++) {
+        if ((*prim_itr)->g->intersect(s, &curr_isect)) {
+            if (curr_isect.depth < maxL) {
+                visible = false;
+            }
+        }
+    }
+    return visible;
+}

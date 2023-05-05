@@ -1,22 +1,22 @@
-#ifndef AmbientLight_hpp
-#define AmbientLight_hpp
+#ifndef PointLight_hpp
+#define PointLight_hpp
 
 #include "light.hpp"
 
-class AmbientLight: public Light {
+class PointLight: public Light {
 public:
     RGB color;
-    AmbientLight (RGB _color): color(_color) { type = AMBIENT_LIGHT; }
-    ~AmbientLight () {}
+    Point pos;
+    PointLight (RGB _color, Point _pos): color(_color), pos(_pos) { type = POINT_LIGHT; }
+    ~PointLight () {}
     // return the Light RGB radiance for a given point : p
     RGB L (Point p) {return color;}
-    // return the Light RGB radiance
     RGB L () {return color;}
     // return a point p and RGB radiance for a given probability pair prob[2]
     RGB Sample_L (float *prob, Point *p) {
-        p = NULL;
+        *p = pos;
         return color;
     }
 };
 
-#endif /* AmbientLight_hpp */
+#endif /* PointLight_hpp */

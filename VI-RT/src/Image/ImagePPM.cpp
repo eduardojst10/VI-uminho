@@ -39,8 +39,7 @@ bool ImagePPM::Save (std::string filename) {
     try{
         ofs.open(filename, std::ios::binary); //need to spec. binary mode for windows
         if(ofs.fail()){
-          throw("Cant open output file");
-          return false;  
+          throw std::runtime_error("Cant open output file"); 
         } 
         ofs << "P6\n" << this->W << " " << this->H << "\n255\n";
 
@@ -60,10 +59,10 @@ bool ImagePPM::Save (std::string filename) {
         //b = this->imageToSave->val[2];
         //ofs << r << g << b;
         ofs.close();    
-    }catch(std::string err){
-        std:: cerr << err << std:: endl;
-        ofs.close();
-        return false;
+    }catch(const std::runtime_error &err) {
+    std::cerr << err.what() << std::endl;
+    ofs.close();
+    return false;
     }
 
 
