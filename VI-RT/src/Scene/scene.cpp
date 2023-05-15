@@ -9,7 +9,6 @@
 #include <iostream>
 #include <set>
 #include <vector>
-//#include "spdlog/spdlog.h"
 
 using namespace tinyobj;
 
@@ -48,18 +47,6 @@ static void PrintInfo (const ObjReader myObj) {
     
 }
 
-/*
-
-COMEÇAR AQUI
- Use tiny load to load .obj scene descriptions
- https://github.com/tinyobjloader/tinyobjloader
- 
-int numPrimitives, numLights, numBRDFs;
-    std::vector <Primitive> prims;
-    std::vector <Light> lights;
-    std::vector <BRDF> BRDFs; 
- 
-*/
 
 bool Scene::Load (const std::string &fname) {
     tinyobj::ObjReader myObjReader;
@@ -71,7 +58,7 @@ bool Scene::Load (const std::string &fname) {
         return false;
     }
 
-    PrintInfo(myObjReader);
+    //PrintInfo(myObjReader);
 
     // convert loader's representation to my representation
     const std::vector<shape_t> shapes = myObjReader.GetShapes();
@@ -118,6 +105,7 @@ bool Scene::Load (const std::string &fname) {
                 return false;
             }
             Face face; 
+            BB boundingbox;
             for (size_t i = 0; i < fv; i++) {
                 index_t idx = shape.mesh.indices[index_offset + i];
                 face.vert_ndx[i] = idx.vertex_index;  //loading of vertex values
@@ -125,7 +113,7 @@ bool Scene::Load (const std::string &fname) {
 
                 /*
                     TODO:
-                     variável bool hasShadingNormals, como obter?
+                     variável bool hasShadingNormals:
                      Se temos check whether the normal_index field is valid or not for each vertex, and if it is, 
                      we store the index of the shading normal in the face.vert_normals_ndx array and set the hasShadingNormals 
                      flag to true
@@ -135,18 +123,14 @@ bool Scene::Load (const std::string &fname) {
                     face.hasShadingNormals = true;
                 }else face.hasShadingNormals = false;
 
-                /*
-                   Bounding box (BB) to the position of the first vertex and then updates it for each subsequent vertex by 
-                   computing the minimum and maximum coordinates along each axis. After the loop, the bounding box will 
-                   contain the minimum and maximum coordinates of all vertices of the face. 
+                Point p = mesh->vertices[face.vert_ndx[i]];
+                boundingbox.min.X = std::min(boundingbox.min.X , p.X );
+                boundingbox.min.Y = std::min(boundingbox.min.Y, p.Y);
+                boundingbox.min.Z = std::min(boundingbox.min.Z, p.Z);
+                boundingbox.max.X = std::max(boundingbox.max.X, p.X);
+                boundingbox.max.Y = std::max(boundingbox.max.Y, p.Y);
+                boundingbox.max.Z = std::max(boundingbox.max.Z, p.Z);
                 
-                    bb.min.X = std::min(bb.min.X , p.X );
-                    bb.min.Y = std::min(bb.min.Y, p.Y);
-                    bb.min.Z = std::min(bb.min.Z, p.Z);
-                    bb.max.X = std::max(bb.max.X, p.X);
-                    bb.max.Y = std::max(bb.max.Y, p.Y);
-                    bb.max.Z = std::max(bb.max.Z, p.Z);
-                */
             }
 
             // Calculate geometric normal
@@ -162,6 +146,7 @@ bool Scene::Load (const std::string &fname) {
             Vector geonormal = (v1 - v0).cross(v2-v0);
             geonormal.normalize();
             face.geoNormal = geonormal;
+            face.bb = boundingbox;
             mesh->faces.push_back(face);
             mesh->primitive = primitive->name;
             //Próximo vertice, every 3 in array
@@ -202,8 +187,6 @@ bool Scene::Load (const std::string &fname) {
     return true;
 }
 
-bool SetLights (void) { return true; }
-
 bool Scene::trace (Ray r, Intersection *isect) {
     Intersection curr_isect;
     bool intersection = false;    
@@ -232,7 +215,26 @@ bool Scene::trace (Ray r, Intersection *isect) {
             
         }
         i++;
+    }
+    isect->isLight = false;
 
+    for(auto l = lights.begin(); l != lights.end(); l++){
+        if ((*l)->type == AREA_LIGHT) {
+            AreaLight *al = static_cast<AreaLight*> (*l);
+            if (al->gem->intersect(r, &curr_isect)) {
+                if (!intersection) { // first intersection
+                    intersection = true;
+                    *isect = curr_isect;
+                    isect->isLight = true;
+                    isect->Le = al->L();
+                }
+                else if (curr_isect.depth < isect->depth) {
+                    *isect = curr_isect;
+                    isect->isLight = true;
+                    isect->Le = al->L();
+                }
+            }
+        }
     }
     
     return intersection;

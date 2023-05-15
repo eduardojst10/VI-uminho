@@ -18,6 +18,8 @@ public:
     Vector operator +(const Vector &p) const { return {X+p.X, Y+p.Y, Z+p.Z};}
     Vector operator *(const float f) const { return {f*X, f*Y, f*Z};}
     Vector operator *(const double f) const { return {(float)(f*X), (float)(f*Y), (float)(f*Z)};}
+    Vector operator -() const {return {-X, -Y, -Z}; }
+    
     friend Vector operator*(const float f, const Vector& p) {
         return p*f;
     }
@@ -29,7 +31,7 @@ public:
             return Point(X*p.X,Y*p.Y,Z*p.Z);
         }
     */
-    // Addition between point and vector
+    
     
     
     
@@ -109,6 +111,10 @@ public:
     Point Permute(int x, int y, int z) {
         const float XYZ[3]={X,Y,Z};
         return Point(XYZ[x], XYZ[y], XYZ[z]);
+    }
+
+    inline float norm() const{
+        return std::sqrtf(X*X+Y*Y+Z*Z);
     }
 };
 

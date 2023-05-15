@@ -2,6 +2,7 @@
 #define StandardRenderer_hpp
 
 #include "renderer.hpp"
+#include <cstdlib> 
 
 class StandardRenderer: public Renderer {
 public:

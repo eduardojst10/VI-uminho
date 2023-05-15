@@ -34,6 +34,10 @@ public:
     {
         return RGB(R * value, G * value, B * value);
     }
+
+    RGB operator/(float value){
+        return RGB(R / value, G / value, B / value);
+    }
     float Y() {
         return (R*0.2126 + G*0.7152 + B*0.0722 );
     }

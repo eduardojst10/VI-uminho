@@ -6,6 +6,7 @@
 #include <vector>
 #include "../Primitive/primitive.hpp"
 #include "../Light/light.hpp"
+#include "../Light/AreaLight.hpp"
 #include "../Rays/ray.hpp"
 #include "../Rays/intersection.hpp"
 #include "../Primitive/BRDF/BRDF.hpp"

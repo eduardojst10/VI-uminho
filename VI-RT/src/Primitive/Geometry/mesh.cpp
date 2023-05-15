@@ -36,7 +36,7 @@ bool Mesh::TriangleIntersect (Ray r, Face face, Intersection *isect) {
         return false;
     }
     f = 1.0f/a;
-    s = v0.point2vec(r.o); // s = r.0 - v0;
+    s = v0.point2vec(r.o); // s = r.o - v0;
     u = f * s.dot(h);
     if (u < 0.0 || u > 1.0)
         return false;

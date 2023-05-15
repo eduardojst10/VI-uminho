@@ -4,7 +4,6 @@ cmake_minimum_required(VERSION 3.10)
 project(VI-RT)
 
 set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_CXX_FLAGS_RELEASE "-O3")
 set(CMAKE_CXX_FLAGS_DEBUG "-g")
 
 if  (WIN32)
@@ -16,7 +15,6 @@ else(WIN32) #Linux and Mac
 endif(WIN32)
 
 # Add main executable
-
 add_executable(main main.cpp)
 
 # Add subdirectories
@@ -32,13 +30,12 @@ add_library(
         Image/ImagePPM.cpp
         Image/ImagePPM.hpp
 )
-add_library(
-        LibLight
-        Light/AmbientLight.hpp
-        Light/light.hpp
-        Light/PointLight.hpp
-        
-)
+#add_library(
+#        LibLight
+#        Light/AmbientLight.hpp
+#        Light/light.hpp
+#        Light/PointLight.hpp        
+#)
 add_library(
         LibPrimitive
         Primitive/BRDF/BRDF.hpp
@@ -47,6 +44,9 @@ add_library(
         Primitive/Geometry/geometry.hpp
         Primitive/Geometry/mesh.hpp
         Primitive/Geometry/mesh.cpp
+        Primitive/Geometry/geometry.hpp
+        Primitive/Geometry/triangle.hpp
+        Primitive/Geometry/triangle.cpp
         Primitive/BB.hpp
         Primitive/primitive.hpp
 )
@@ -65,8 +65,10 @@ add_library(
         LibShader
         Shader/AmbientShader.cpp
         Shader/WhittedShader.cpp
+        Shader/DistributedShader.cpp
         Shader/AmbientShader.hpp
         Shader/WhittedShader.hpp
+        Shader/DistributedShader.hpp
         Shader/shader.hpp
         )
 add_library(
@@ -75,7 +77,6 @@ add_library(
         utils/RGB.hpp
         utils/vector.hpp
 )
-
 # Link libraries
 target_link_libraries(main LibCamera) 
 target_link_libraries(main LibPrimitive)
