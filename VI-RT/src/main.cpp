@@ -9,6 +9,7 @@
 #include "Shader/AmbientShader.hpp"
 #include "Shader/WhittedShader.hpp"
 #include "Shader/DistributedShader.hpp"
+#include "Shader/PathTracerShader.hpp"
 #include "Light/AmbientLight.hpp"
 #include "Light/PointLight.hpp"
 #include "Light/AreaLight.hpp"
@@ -83,14 +84,14 @@ int main(int argc, const char * argv[]) {
     //scene.numLights++;
 
     // AreaLight properties
-    //RGB power(1.f,1.f,1.f);
-    //Point v1(343.0, 548.0, 227.0), v2(343.0, 548.0, 332.0), v3(213.0, 548.0, 332.0);
-    //instances would be (0,-1,0) (pointing downwards assuming y-axis is up).
-    //Vector n(0,-1,0);
-    //AreaLight *al = new AreaLight(power, v1, v2, v3, n);
-    //scene.lights.push_back(al);
-    //scene.numLights++;
-    createAreaLights(scene);
+    RGB power(0.65f,0.65f,0.65f);
+    Point v1(343.0, 548.0, 227.0), v2(343.0, 548.0, 332.0), v3(213.0, 548.0, 332.0);
+    // assumimos y-axis is up).
+    Vector n(0,-1,0);
+    AreaLight *al = new AreaLight(power, v1, v2, v3, n);
+    scene.lights.push_back(al);
+    scene.numLights++;
+    //createAreaLights(scene);
     success = scene.Load(my_path); 
 
     if (!success) {
@@ -113,12 +114,13 @@ int main(int argc, const char * argv[]) {
 
     // create the shader
     RGB background(0.0f, 0.0f, 1.0f);
-    shd = new DistributedShader(&scene, background);
+    shd = new PathTracerShader(&scene, background);
 
 
     // declare the renderer
     StandardRenderer myRender (cam, &scene, img, shd);
     //std::cout << "- Before Rendering!" << std::endl;
+    
     // render
     myRender.Render();
     img->Save("C:/Users/USER/Documents/GitHub/VI-uminho/VI-RT/cornell_box.ppm");

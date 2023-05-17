@@ -66,9 +66,11 @@ add_library(
         Shader/AmbientShader.cpp
         Shader/WhittedShader.cpp
         Shader/DistributedShader.cpp
+        Shader/PathTracerShader.cpp
         Shader/AmbientShader.hpp
         Shader/WhittedShader.hpp
         Shader/DistributedShader.hpp
+        Shader/PathTracerShader.hpp
         Shader/shader.hpp
         )
 add_library(

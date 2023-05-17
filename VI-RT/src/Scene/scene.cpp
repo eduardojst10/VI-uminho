@@ -190,15 +190,12 @@ bool Scene::Load (const std::string &fname) {
 bool Scene::trace (Ray r, Intersection *isect) {
     Intersection curr_isect;
     bool intersection = false;    
-
     if (numPrimitives==0) return false;
-    //std:: cout << prims.size() << std::endl;
+
     // iterate over all primitives
     int i=1;
-    for (auto prim_itr = prims.begin() ; prim_itr != prims.end() ; prim_itr++) {
-        
-        if ((*prim_itr)->g->intersect(r, &curr_isect)) {
-            
+    for (auto prim_itr = prims.begin() ; prim_itr != prims.end() ; prim_itr++) {   
+        if ((*prim_itr)->g->intersect(r, &curr_isect)) { 
             if (!intersection) { // first intersection
                 if(i == 6){
                     //std:: cout << (*prim_itr)->material_ndx << std::endl;
@@ -216,11 +213,11 @@ bool Scene::trace (Ray r, Intersection *isect) {
         }
         i++;
     }
-    isect->isLight = false;
 
+    isect->isLight = false;
     for(auto l = lights.begin(); l != lights.end(); l++){
         if ((*l)->type == AREA_LIGHT) {
-            AreaLight *al = static_cast<AreaLight*> (*l);
+            AreaLight *al = (AreaLight *)*l;//static_cast<AreaLight*> (*l);
             if (al->gem->intersect(r, &curr_isect)) {
                 if (!intersection) { // first intersection
                     intersection = true;
@@ -236,7 +233,7 @@ bool Scene::trace (Ray r, Intersection *isect) {
             }
         }
     }
-    
+        
     return intersection;
 }
 

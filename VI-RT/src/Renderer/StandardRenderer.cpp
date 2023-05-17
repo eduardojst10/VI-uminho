@@ -29,7 +29,7 @@ void StandardRenderer::Render () {
                 intersected = this->scene->trace(primary,&isect);
             
                 // shade this intersection (shader)
-                this_color = this->shd->shade(intersected,isect); 
+                this_color = this->shd->shade(intersected,isect,0);     
                 color += this_color;
             }
             color = color / spp;

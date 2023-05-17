@@ -29,6 +29,11 @@ public:
         std::cout << "#lights = " << numLights << " ; ";
         std::cout << "#materials = " << numBRDFs << " ;" << std::endl;
     }
+
+    void addPrimitive(Primitive* p) {
+        prims.push_back(p);
+        numPrimitives++;
+    }
 };
 
 #endif /* Scene_hpp */

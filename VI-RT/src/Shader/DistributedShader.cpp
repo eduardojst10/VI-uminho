@@ -58,7 +58,7 @@ RGB DistributedShader::directLighting (Intersection isect, Phong *f) {
                 Point lpoint;
                 float l_pdf;
                 // l é iterador
-                AreaLight *al = static_cast<AreaLight*> (*l);
+                AreaLight *al = (AreaLight *) (*l);
                 float rnd[2];
                 rnd[0] = ((float)rand()) / ((float)RAND_MAX);
                 rnd[1] = ((float)rand()) / ((float)RAND_MAX);
@@ -73,14 +73,14 @@ RGB DistributedShader::directLighting (Intersection isect, Phong *f) {
                 float cosL = Ldir.dot(isect.sn);
                 // cosine between Ldir and the area light source normal
                 float cosL_LA = Ldir.dot(al->gem->normal);
+                //shade
                 if (cosL>0. && cosL_LA<=0.) { 
                     //generate ray
                     Ray shadow(isect.p,Ldir);
                     shadow.adjustOrigin(isect.gn);
                     if(scene->visibility(shadow,Ldistance-EPSILON)){
                         color+= (Kd * L * cosL) / l_pdf;
-                    }
-                
+                    }        
                 }
             }
         } 

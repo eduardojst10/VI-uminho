@@ -28,5 +28,9 @@ public:
         _pdf = pdf;
         return intensity;
     }
+    // return the Light RGB radiance for a given point : p
+    RGB L (Point p) {return power;}
+    // return the Light RGB radiance
+    RGB L () {return power;}
 };
 #endif /* AreaLight_hpp */
