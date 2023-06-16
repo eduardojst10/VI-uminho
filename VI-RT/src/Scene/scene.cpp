@@ -50,16 +50,12 @@ static void PrintInfo (const ObjReader myObj) {
 
 bool Scene::Load (const std::string &fname) {
     tinyobj::ObjReader myObjReader;
-    bool success = false;
-    
     // Loader triangulating the faces
     if (!myObjReader.ParseFromFile(fname)) {
         if (!myObjReader.Error().empty()) {std::cerr << "TinyObjReader: " << myObjReader.Error();}  
         return false;
     }
-
     //PrintInfo(myObjReader);
-
     // convert loader's representation to my representation
     const std::vector<shape_t> shapes = myObjReader.GetShapes();
     const std::vector<material_t> materials = myObjReader.GetMaterials();
@@ -176,7 +172,6 @@ bool Scene::Load (const std::string &fname) {
             Dps de dar load aos vertices, normals e faces vamos criar a nova Primitiva             
           
         */
-            
         }    
         Geometry* geometry = mesh;
         primitive->g = geometry;
@@ -187,53 +182,38 @@ bool Scene::Load (const std::string &fname) {
     return true;
 }
 
-bool Scene::trace (Ray r, Intersection *isect) {
+bool Scene::trace(Ray r, Intersection *isect) {
     Intersection curr_isect;
     bool intersection = false;    
     if (numPrimitives==0) return false;
 
     // iterate over all primitives
-    int i=1;
     for (auto prim_itr = prims.begin() ; prim_itr != prims.end() ; prim_itr++) {   
         if ((*prim_itr)->g->intersect(r, &curr_isect)) { 
-            if (!intersection) { // first intersection
-                if(i == 6){
-                    //std:: cout << (*prim_itr)->material_ndx << std::endl;
-                }
+            if (!intersection || curr_isect.depth < isect->depth) { // first intersection
                 intersection = true;
                 *isect = curr_isect;
                 isect->f = this->BRDFs[(*prim_itr)->material_ndx];
-            }
-            else if (curr_isect.depth < isect->depth) {
-                //std:: cout << curr_isect.depth << " < " <<isect->depth << "\n";
-                *isect = curr_isect;
-                isect->f = this->BRDFs[(*prim_itr)->material_ndx];
+                isect->isLight = false;
             }
             
         }
-        i++;
     }
-
-    isect->isLight = false;
     for(auto l = lights.begin(); l != lights.end(); l++){
         if ((*l)->type == AREA_LIGHT) {
             AreaLight *al = (AreaLight *)*l;//static_cast<AreaLight*> (*l);
             if (al->gem->intersect(r, &curr_isect)) {
-                if (!intersection) { // first intersection
+                if (!intersection || curr_isect.depth < isect->depth) { 
                     intersection = true;
                     *isect = curr_isect;
                     isect->isLight = true;
                     isect->Le = al->L();
-                }
-                else if (curr_isect.depth < isect->depth) {
-                    *isect = curr_isect;
-                    isect->isLight = true;
-                    isect->Le = al->L();
+                    isect->f = nullptr;
                 }
             }
         }
     }
-        
+
     return intersection;
 }
 

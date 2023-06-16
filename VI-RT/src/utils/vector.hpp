@@ -51,8 +51,8 @@ public:
     }
     // from pbrt book (3rd ed.), sec 2.2.1, pag 65
     Vector cross (Vector v2) const{
-        double v1x = X, v1y = Y, v1z = Z;
-        double v2x = v2.X, v2y = v2.Y, v2z = v2.Z;
+        float v1x = X, v1y = Y, v1z = Z;
+        float v2x = v2.X, v2y = v2.Y, v2z = v2.Z;
         return Vector((v1y * v2z) - (v1z * v2y),
         (v1z * v2x) - (v1x * v2z),
         (v1x * v2y) - (v1y * v2x));

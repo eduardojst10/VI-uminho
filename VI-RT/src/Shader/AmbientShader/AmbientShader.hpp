@@ -1,8 +1,8 @@
 #ifndef AmbientShader_hpp
 #define AmbientShader_hpp
 
-#include "shader.hpp"
-#include "../Primitive/BRDF/Phong.hpp"
+#include "../shader.hpp"
+#include "../../Primitive/BRDF/Phong.hpp"
 
 class AmbientShader: public Shader {
     RGB background;

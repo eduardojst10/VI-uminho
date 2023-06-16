@@ -1,9 +1,9 @@
 #ifndef WhittedShader_hpp
 #define WhittedShader_hpp
 
-#include "shader.hpp"
-#include "../Primitive/BRDF/Phong.hpp"
-#include "../Rays/ray.hpp"
+#include "../shader.hpp"
+#include "../../Primitive/BRDF/Phong.hpp"
+#include "../../Rays/ray.hpp"
 
 class WhittedShader: public Shader {
     RGB background;

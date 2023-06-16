@@ -24,7 +24,7 @@ public:
     // return a point p and RGB radiance for a given probability pair prob[2]
     virtual RGB Sample_L (float *prob, Point *p) {return RGB();}
     // return the probability of p
-    virtual float pdf(Point p) {return 1.;}
+    virtual float pdf(Point p) {return 1.f;}
 };
 
 #endif /* light_hpp */

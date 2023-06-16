@@ -6,10 +6,10 @@
 #include "Renderer/renderer.hpp"
 #include "Renderer/StandardRenderer.hpp"
 #include "Image/ImagePPM.hpp"
-#include "Shader/AmbientShader.hpp"
-#include "Shader/WhittedShader.hpp"
-#include "Shader/DistributedShader.hpp"
-#include "Shader/PathTracerShader.hpp"
+#include "Shader/AmbientShader/AmbientShader.hpp"
+#include "Shader/WhittedShader/WhittedShader.hpp"
+#include "Shader/DistributedShader/DistributedShader.hpp"
+#include "Shader/PathTracerShader/PathTracerShader.hpp"
 #include "Light/AmbientLight.hpp"
 #include "Light/PointLight.hpp"
 #include "Light/AreaLight.hpp"
@@ -84,13 +84,18 @@ int main(int argc, const char * argv[]) {
     //scene.numLights++;
 
     // AreaLight properties
-    RGB power(0.65f,0.65f,0.65f);
-    Point v1(343.0, 548.0, 227.0), v2(343.0, 548.0, 332.0), v3(213.0, 548.0, 332.0);
+    RGB power(0.2f,0.2f,0.2f);
+    Point v1(343.0, 548.0, 227.0), v2(343.0, 548.0, 332.0), v3(213.0, 548.0, 332.0), v4(213.0, 548.0, 227.0);
+    
     // assumimos y-axis is up).
     Vector n(0,-1,0);
-    AreaLight *al = new AreaLight(power, v1, v2, v3, n);
-    scene.lights.push_back(al);
+    AreaLight *al1 = new AreaLight(power, v1, v2, v3, n);
+    scene.lights.push_back(al1);
     scene.numLights++;
+    AreaLight *al2 = new AreaLight(power, v1, v3, v4, n);
+    scene.lights.push_back(al2);
+    scene.numLights++;
+
     //createAreaLights(scene);
     success = scene.Load(my_path); 
 
@@ -108,8 +113,8 @@ int main(int argc, const char * argv[]) {
     img = new ImagePPM(W,H); 
     // Camera parameters 
     const Point Eye ={280,275,-330}, At={280,265,0};
-    const Vector Up={0,1,0};
-    const float fovW = M_PI/2, fovH = fovW * (H/W);
+    const Vector Up={0.f,1.f,0.f};
+    const float fovW = M_PI/2.f, fovH = fovW * (H/W);
     cam = new Perspective(Eye, At, Up, W, H, fovW, fovH); 
 
     // create the shader

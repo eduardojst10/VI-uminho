@@ -1,9 +1,9 @@
 #ifndef DistributedShader_hpp
 #define DistributedShader_hpp
-#include "shader.hpp"
-#include "../Primitive/BRDF/Phong.hpp"
-#include "../Rays/ray.hpp"
-#include "../Light/AreaLight.hpp"
+#include "../shader.hpp"
+#include "../../Primitive/BRDF/Phong.hpp"
+#include "../../Rays/ray.hpp"
+#include "../../Light/AreaLight.hpp"
 
 class DistributedShader: public Shader {
     RGB background;

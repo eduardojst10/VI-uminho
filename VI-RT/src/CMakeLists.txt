@@ -63,14 +63,14 @@ add_library(
 )
 add_library(
         LibShader
-        Shader/AmbientShader.cpp
-        Shader/WhittedShader.cpp
-        Shader/DistributedShader.cpp
-        Shader/PathTracerShader.cpp
-        Shader/AmbientShader.hpp
-        Shader/WhittedShader.hpp
-        Shader/DistributedShader.hpp
-        Shader/PathTracerShader.hpp
+        Shader/AmbientShader/AmbientShader.cpp
+        Shader/WhittedShader/WhittedShader.cpp
+        Shader/DistributedShader/DistributedShader.cpp
+        Shader/PathTracerShader/PathTracerShader.cpp
+        Shader/AmbientShader/AmbientShader.hpp
+        Shader/WhittedShader/WhittedShader.hpp
+        Shader/DistributedShader/DistributedShader.hpp
+        Shader/PathTracerShader/PathTracerShader.hpp
         Shader/shader.hpp
         )
 add_library(

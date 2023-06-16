@@ -38,7 +38,7 @@ public:
         c2w[2][2] = F.Z;
         
     }
-    void GenerateRay(const int x, const int y, Ray *r, const float *cam_jitter=NULL);
+    void GenerateRay(const int x, const int y, Ray *r, const float *cam_jitter);
     void getResolution (int *_W, int *_H) {*_W=W; *_H=H;}
 };
 

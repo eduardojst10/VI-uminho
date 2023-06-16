@@ -78,12 +78,7 @@ bool Mesh::intersect (Ray r, Intersection *isect) {
     bool intersect, intersect_this_face;
     Intersection min_isect, curr_isect;
     float min_depth=  MAX_FLOAT; // 
-    /*
     
-        if (this->primitive == "short_block" || this->primitive == "tall_block") {
-            std::cout << "Testing intersection with " << this->primitive << std::endl;
-        }
-    */
     // If it intersects then loop through the faces
     intersect = false;
     for (auto face_it=faces.begin() ; face_it != faces.end() ; face_it++) {
@@ -97,7 +92,5 @@ bool Mesh::intersect (Ray r, Intersection *isect) {
         }
     }
     *isect = min_isect;
-    
-    
     return intersect;
 }
