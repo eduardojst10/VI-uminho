@@ -6,7 +6,7 @@
 #include "Scene.hpp"
 
 class AccelStruct {
-    public:
+public:
     AccelStruct () {}
     ~AccelStruct () {}
     void build (Scene s) {}

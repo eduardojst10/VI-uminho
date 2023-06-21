@@ -3,7 +3,7 @@
 RGB DistributedShader:: specularReflection(Intersection isect, Phong *f){
     // para já está igual ao whittedShader
     RGB color(0.,0.,0.);
-    
+
     // generate the specular ray
     float cos = isect.gn.dot(isect.wo);
     Vector Rdir = 2.f * cos * isect.gn - isect.wo;
@@ -49,11 +49,11 @@ RGB DistributedShader::directLighting (Intersection isect, Phong *f) {
                     if(scene->visibility(shadow,Ldistance-EPSILON)) color += f->Kd * L * cosL;
                 }
             }
-            continue;           
+            continue;
 
         }
         if ((*l)->type == AREA_LIGHT) { // is it an area light ?
-            if(!f -> Kd.isZero()){    
+            if(!f -> Kd.isZero()){
                 RGB L, Kd = f->Kd;
                 Point lpoint;
                 float l_pdf;
@@ -74,16 +74,16 @@ RGB DistributedShader::directLighting (Intersection isect, Phong *f) {
                 // cosine between Ldir and the area light source normal
                 float cosL_LA = Ldir.dot(al->gem->normal);
                 //shade
-                if (cosL>0. && cosL_LA<=0.) { 
+                if (cosL>0. && cosL_LA<=0.) {
                     //generate ray
                     Ray shadow(isect.p,Ldir);
                     shadow.adjustOrigin(isect.gn);
                     if(scene->visibility(shadow,Ldistance-EPSILON)){
                         color+= (Kd * L * cosL) / l_pdf;
-                    }        
+                    }
                 }
             }
-        } 
+        }
     }
     return color;
 }
@@ -91,7 +91,7 @@ RGB DistributedShader::directLighting (Intersection isect, Phong *f) {
 
 RGB DistributedShader::shade(bool intersected, Intersection isect) {
     RGB color(0.,0.,0.);
-    
+
     if (!intersected) return (background);
     // intersection with a light source
     if (isect.isLight) return isect.Le;

@@ -13,7 +13,7 @@ RGB PathTracerShader:: specularReflection(Intersection isect, Phong *f, int dept
         Ray specular(isect.p, Rdir);
 
         specular.adjustOrigin(isect.gn);
-    
+
         // trace ray
         bool intersected = scene->trace(specular, &s_isect);
         // shade this intersection
@@ -24,7 +24,7 @@ RGB PathTracerShader:: specularReflection(Intersection isect, Phong *f, int dept
     }else{ //glossy case -> glossy materials
         float rnd[2];
         rnd[0] = ((float)rand()) / ((float)RAND_MAX);
-        rnd[1] = ((float)rand()) / ((float)RAND_MAX); 
+        rnd[1] = ((float)rand()) / ((float)RAND_MAX);
         Vector S_around_N;
         const float cos_theta = powf(rnd[1], 1.f/(f->Ns+1.f));
         const float aux_r1 = powf(rnd[1], 2.f/(f->Ns+1.f));
@@ -73,11 +73,11 @@ RGB PathTracerShader::directLighting(Intersection isect, Phong *f) {
                     if(scene->visibility(shadow,Ldistance-EPSILON)) color += f->Kd * L * cosL;
                 }
             }
-            continue;           
+            continue;
 
         }
         if ((*l)->type == AREA_LIGHT) { // is it an area light ?
-            if(!f -> Kd.isZero()){    
+            if(!f -> Kd.isZero()){
                 RGB L, Kd = f->Kd;
                 Point lpoint;
                 float l_pdf;
@@ -98,16 +98,16 @@ RGB PathTracerShader::directLighting(Intersection isect, Phong *f) {
                 // cosine between Ldir and the area light source normal
                 float cosL_LA = Ldir.dot(al->gem->normal);
                 //shade
-                if (cosL>0. && cosL_LA<=0.) { 
+                if (cosL>0. && cosL_LA<=0.) {
                     //generate ray
                     Ray shadow(isect.p,Ldir);
                     shadow.adjustOrigin(isect.gn);
                     if(scene->visibility(shadow,Ldistance-EPSILON)){
                         color+= (Kd * L * cosL) / l_pdf;
-                    }        
+                    }
                 }
             }
-        } 
+        }
     }
     return color;
 }
@@ -157,7 +157,7 @@ RGB PathTracerShader::shade(bool intersected, Intersection isect, int depth) {
         if (rnd < s_p) lcolor = specularReflection(isect, f ,depth) / s_p;
 
         else lcolor = diffuseReflection(isect,f,depth) / (1.f-s_p);
-        
+
         if(depth < MAX_DEPTH) //rnd_russian < continue_p false (sem russian roulette)
             color+=lcolor;
         else color+= lcolor / continue_p;

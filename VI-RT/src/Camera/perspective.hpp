@@ -12,7 +12,7 @@ class Perspective: public Camera {
     int W, H;
     float c2w[3][3];  // camera 2 world transform
 public:
-    Perspective (const Point Eye, const Point At, const Vector Up, const int W, const int H, const float fovW, const float fovH): Eye(Eye), At(At), Up(Up), W(W), H(H), fovW(fovW), fovH(fovH)  {  
+    Perspective (const Point Eye, const Point At, const Vector Up, const int W, const int H, const float fovW, const float fovH): Eye(Eye), At(At), Up(Up), W(W), H(H), fovW(fovW), fovH(fovH)  {
         // compute camera 2 world transform
         // camera direction (F)
         Vector F = Eye.point2vec(At);
@@ -36,7 +36,7 @@ public:
         c2w[2][0] = F.X;
         c2w[2][1] = F.Y;
         c2w[2][2] = F.Z;
-        
+
     }
     void GenerateRay(const int x, const int y, Ray *r, const float *cam_jitter);
     void getResolution (int *_W, int *_H) {*_W=W; *_H=H;}

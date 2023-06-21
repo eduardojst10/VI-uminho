@@ -13,11 +13,11 @@ public:
     float Ns;    //Shininess: Se o Ns for muito grande este comporta-se como um espelho shininess
 
     Phong() :
-        Ka(RGB(0.0f, 0.0f, 0.0f)),
-        Kd(RGB(0.0f, 0.0f, 0.0f)),
-        Ks(RGB(0.0f, 0.0f, 0.0f)),
-        Kt(RGB(0.0f, 0.0f, 0.0f)),
-        Ns(0.0f)
+            Ka(RGB(0.0f, 0.0f, 0.0f)),
+            Kd(RGB(0.0f, 0.0f, 0.0f)),
+            Ks(RGB(0.0f, 0.0f, 0.0f)),
+            Kt(RGB(0.0f, 0.0f, 0.0f)),
+            Ns(0.0f)
     {}
 };
 

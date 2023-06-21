@@ -13,6 +13,9 @@
 #include "Light/AmbientLight.hpp"
 #include "Light/PointLight.hpp"
 #include "Light/AreaLight.hpp"
+#include "Image/ImageJPG.hpp"
+#include "Image/ImagePFM.hpp"
+#include "Image/ImageEXR.hpp"
 
 
 void createAreaLights(Scene &scene){
@@ -69,11 +72,14 @@ int main(int argc, const char * argv[]) {
     Scene scene;
     Perspective *cam; // Camera
     ImagePPM *img;    // Image
+    ImageJPG *img_jpg;
+    ImagePFM *img_pfm;
+    ImageEXR *img_exr;
     Shader *shd;
     bool success;
 
     //change for specific path in local machine
-    std::string my_path = "C:/Users/USER/Documents/GitHub/VI-uminho/VI-RT/src/Scene/tinyobjloader/models/cornell_box_VI.obj";
+    std::string my_path = "/Users/joao/Desktop/VI/Scene/tinyobjloader/models/cornell_box_VI.obj";
 
     //AmbientLight *ambient = new AmbientLight(RGB(0.05,0.05,0.05));
     //scene.lights.push_back(ambient);
@@ -110,7 +116,10 @@ int main(int argc, const char * argv[]) {
     const int W = 1024;
     const int H = 1024;
 
-    img = new ImagePPM(W,H); 
+    img = new ImagePPM(W,H);
+    img_jpg = new ImageJPG(H, W);
+    img_pfm = new ImagePFM(H, W);
+    img_exr = new ImageEXR(H, W);
     // Camera parameters 
     const Point Eye ={280,275,-330}, At={280,265,0};
     const Vector Up={0.f,1.f,0.f};
@@ -122,13 +131,35 @@ int main(int argc, const char * argv[]) {
     shd = new PathTracerShader(&scene, background);
 
 
-    // declare the renderer
     StandardRenderer myRender (cam, &scene, img, shd);
-    //std::cout << "- Before Rendering!" << std::endl;
+    StandardRenderer myRender_jpg(cam, &scene, img_jpg, shd);
+    StandardRenderer myRender_pfm(cam, &scene, img_pfm, shd);
+    StandardRenderer myRender_exr(cam, &scene, img_exr, shd);
+
     
     // render
+    std::cout << "Rendering ppm image..." << std::endl;
     myRender.Render();
-    img->Save("C:/Users/USER/Documents/GitHub/VI-uminho/VI-RT/cornell_box.ppm");
+    std::cout << "Finished rendering ppm image." << std::endl;
+
+    std::cout << "Rendering JPG image..." << std::endl;
+    myRender_jpg.Render();
+    std::cout << "Finished rendering JPG image." << std::endl;
+
+    std::cout << "Rendering PFM image..." << std::endl;
+    myRender_pfm.Render();
+    std::cout << "Finished rendering PFM image." << std::endl;
+
+    std::cout << "Rendering EXR image..." << std::endl;
+    myRender_exr.Render();
+    std::cout << "Finished rendering EXR image." << std::endl;
+
+    std::string final_path = "/Users/joao/Desktop/VI/Output_Results/";
+    std::string ppm_name = "ppm_output.ppm";
+    img->Save(final_path + ppm_name);
+    img_jpg->Save(final_path + "jpg_output.jpg");
+    img_pfm->Save(final_path + "pfm_output.pfm");
+    img_exr->Save(final_path + "exr_output.exr");
 
     std::cout << "That's all!" << std::endl;
     return 0;

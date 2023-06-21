@@ -12,7 +12,7 @@
 #include "../Primitive/BRDF/BRDF.hpp"
 
 class Scene {
-    
+
     std::vector <Primitive*> prims;
     std::vector <BRDF*> BRDFs;
 public:

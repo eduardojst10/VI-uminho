@@ -18,7 +18,7 @@ bool Mesh::TriangleIntersect (Ray r, Face face, Intersection *isect) {
     Point v2 = this->vertices.at(face.vert_ndx[2]);
 
     /*
-    
+
     std::cout << "Triangle: (" << v0.X << ", " << v0.Y << ", " << v0.Z << "), "
           << "(" << v1.X << ", " << v1.Y << ", " << v1.Z << "), "
           << "(" << v2.X << ", " << v2.Y << ", " << v2.Z << ")" << std::endl;
@@ -46,7 +46,7 @@ bool Mesh::TriangleIntersect (Ray r, Face face, Intersection *isect) {
         return false;
     }
     float t = f * edge2.dot(q);
-    
+
     if (t > EPSILON) {
         Point inter = r.o + (r.dir * t);
 
@@ -60,25 +60,25 @@ bool Mesh::TriangleIntersect (Ray r, Face face, Intersection *isect) {
         isect->gn = normal;
         isect->sn = normal;
         isect->wo.normalize();
-       
+
         /*
         if (this->primitive == "short_block" || this->primitive == "tall_block") {
             //std::cout << "isect from inter point: (" << isect->p.X << "," << isect->p.Y << "," << isect->p.Z << ")" << "\n";
             std::cout << "Intersected with " << this->primitive << " at depth: " << isect->depth << std::endl;
         }
-        */      
+        */
         return true;
     }
     else {
         return false;
-    }  
+    }
 }
 
 bool Mesh::intersect (Ray r, Intersection *isect) {
     bool intersect, intersect_this_face;
     Intersection min_isect, curr_isect;
-    float min_depth=  MAX_FLOAT; // 
-    
+    float min_depth=  MAX_FLOAT; //
+
     // If it intersects then loop through the faces
     intersect = false;
     for (auto face_it=faces.begin() ; face_it != faces.end() ; face_it++) {

@@ -12,7 +12,7 @@ class DistributedShader: public Shader {
 public:
     DistributedShader (Scene *scene, RGB bg): background(bg),Shader(scene) {}
     RGB shade (bool intersected, Intersection isect);
-    };
+};
 
 
 #endif /* DistributedShader_hpp */

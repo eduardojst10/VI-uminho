@@ -17,7 +17,7 @@ class PathTracerShader: public Shader {
 public:
     PathTracerShader (Scene *scene, RGB bg): background(bg),Shader(scene) {continue_p = 0.5f; MAX_DEPTH=2;}
     RGB shade (bool intersected, Intersection isect, int depth);
-    };
+};
 
 
 #endif /* PathTracerShader_hpp */
