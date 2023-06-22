@@ -16,7 +16,7 @@
 #include "Image/ImageJPG.hpp"
 #include "Image/ImagePFM.hpp"
 #include "Image/ImageEXR.hpp"
-
+#include <chrono>
 
 void createAreaLights(Scene &scene){
     // Define the power and normal vector for all lights.
@@ -139,23 +139,37 @@ int main(int argc, const char * argv[]) {
     
     // render
     std::cout << "Rendering ppm image..." << std::endl;
+    auto start = std::chrono::high_resolution_clock::now();
     myRender.Render();
-    std::cout << "Finished rendering ppm image." << std::endl;
+    auto end = std::chrono::high_resolution_clock::now();
+    std::chrono::duration<double> elapsed = end - start;
+    std::cout << "Finished rendering ppm image. Time taken: " << elapsed.count() << " s" << std::endl;
 
     std::cout << "Rendering JPG image..." << std::endl;
+    start = std::chrono::high_resolution_clock::now();
     myRender_jpg.Render();
-    std::cout << "Finished rendering JPG image." << std::endl;
+    end = std::chrono::high_resolution_clock::now();
+    elapsed = end - start;
+    std::cout << "Finished rendering JPG image. Time taken: " << elapsed.count() << " s" << std::endl;
 
     std::cout << "Rendering PFM image..." << std::endl;
+    start = std::chrono::high_resolution_clock::now();
     myRender_pfm.Render();
-    std::cout << "Finished rendering PFM image." << std::endl;
+    end = std::chrono::high_resolution_clock::now();
+    elapsed = end - start;
+    std::cout << "Finished rendering PFM image. Time taken: " << elapsed.count() << " s" << std::endl;
 
     std::cout << "Rendering EXR image..." << std::endl;
+    start = std::chrono::high_resolution_clock::now();
     myRender_exr.Render();
-    std::cout << "Finished rendering EXR image." << std::endl;
+    end = std::chrono::high_resolution_clock::now();
+    elapsed = end - start;
+    std::cout << "Finished rendering EXR image. Time taken: " << elapsed.count() << " s" << std::endl;
 
-    std::string final_path = "/Users/joao/Desktop/VI/Output_Results/";
+
+    std::string final_path = "/Users/joao/Desktop/VI 2/Output_Results/";
     std::string ppm_name = "ppm_output.ppm";
+
     img->Save(final_path + ppm_name);
     img_jpg->Save(final_path + "jpg_output.jpg");
     img_pfm->Save(final_path + "pfm_output.pfm");
